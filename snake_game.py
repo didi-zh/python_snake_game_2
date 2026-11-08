@@ -81,9 +81,6 @@ def move_snake():
 def draw():
     global snake_head, food
 
-    if game_over:
-        return 
-    
     move_snake()
     canvas.delete("all")
     canvas.create_rectangle(food.x * TILE_SIZE, food.y * TILE_SIZE, (food.x+1) * TILE_SIZE, (food.y +1)* TILE_SIZE, fill = "red")
@@ -91,6 +88,10 @@ def draw():
     
     for i in snake_body:
         canvas.create_rectangle(i.x*TILE_SIZE, i.y*TILE_SIZE, (i.x+1)*TILE_SIZE, (i.y+1)*TILE_SIZE, fill="blue")
+
+    if game_over:
+         canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, text="GAME OVER", fill="white", font=("Arial", 30))
+         return 
 
     window.after(200, draw)
 draw()
