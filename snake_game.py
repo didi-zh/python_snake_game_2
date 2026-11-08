@@ -27,6 +27,7 @@ food = Tile(20, 20)
 snake_body = []
 velocity_x= 0
 velocity_y= 0
+game_over = False
 
 def change_direction(e):
     global velocity_x, velocity_y
@@ -44,12 +45,34 @@ def change_direction(e):
         velocity_y = 0
 
 def move_snake():
-    global snake_head
+    global snake_head, snake_body, food, game_over
 
+    if (game_over):
+        return
+
+    if (snake_head.x < 0 or snake_head.x >= COLS or snake_head.y < 0 or snake_head.y >= ROWS):
+        game_over = True
+        canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, text="GAmeover", fill= "white", font= ("Arial",30))
+        return
+
+    for i in snake_body:
+        if snake_head.x == i.x and snake_head.y == i.y:
+            game_over= True
+            canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, text="GAmeover", fill= "white", font= ("Arial",30))
+            return
+    
     if snake_head.x == food.x and snake_head.y == food.y:
         snake_body.append(Tile(food.x,food.y))
-        food.x = random.randint(0, COLS-1)*TILE_SIZE
-        food.y= random.randint(0, ROWS-1)*TILE_SIZE
+        food.x = random.randint(0, COLS-1)
+        food.y= random.randint(0, ROWS-1)
+
+    for i in range(len(snake_body) -1,-1,-1):
+        if i== 0:
+            snake_body[i].x =snake_head.x
+            snake_body[i].y = snake_head.y
+        else:
+            snake_body[i].x= snake_body[i-1].x
+            snake_body[i].y= snake_body[i-1].y
 
     snake_head.x += velocity_x
     snake_head.y += velocity_y
@@ -57,6 +80,10 @@ def move_snake():
 
 def draw():
     global snake_head, food
+
+    if game_over:
+        return 
+    
     move_snake()
     canvas.delete("all")
     canvas.create_rectangle(food.x * TILE_SIZE, food.y * TILE_SIZE, (food.x+1) * TILE_SIZE, (food.y +1)* TILE_SIZE, fill = "red")
